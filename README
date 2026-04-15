@@ -1,59 +1,83 @@
-# 🚀 Portfolio Projet Master
+# Portfolio Projet Master
 
-## 📖 Description
+Minimal Next.js initialization for the personal fullstack application that will combine a private project management dashboard and a public recruiter-facing portfolio.
 
-Ce projet consiste à développer une **plateforme web personnelle** permettant de centraliser, gérer et exposer des projets techniques.
-
-L’application combine :
-
-- un **outil privé de gestion de projets** (administration, runbook, automatisation),
-- et un **portfolio public dynamique** destiné aux recruteurs.
-
-Elle permet notamment de :
-
-- structurer les informations techniques des projets,
-- automatiser la récupération de données depuis GitHub,
-- contrôler finement la visibilité des informations (public / privé),
-- et faciliter l’exécution des projets via une documentation claire.
-
----
-
-## 🧩 Fonctionnalités
-
-- Gestion de projets (CRUD)
-- Portfolio public dynamique
-- Intégration GitHub (auto-sync)
-- Runbook d’exécution des projets
-- Statistiques globales
-- Authentification sécurisée
-- Déploiement Docker + CI/CD
-
----
-
-## 🧰 Technologies
-
-- Next.js (TypeScript)
-- NextAuth (authentification)
-- PostgreSQL
-- Prisma ORM
-- Docker / Docker Compose
-- GitHub Actions (CI/CD)
-- Nginx (reverse proxy)
-
----
-
-## ⚙️ Installation
+## Initialization Commands
 
 ```bash
-# Cloner le repository
-git clone <repo-url>
+npx create-next-app@latest portfolio-projet-master \
+  --ts \
+  --tailwind \
+  --eslint \
+  --app \
+  --use-npm \
+  --import-alias "@/*" \
+  --empty
 
-# Accéder au projet
-cd <repo-name>
-
-# Configurer les variables d’environnement
-cp .env.example .env
-
-# Lancer l’application
-docker compose up --build
+cd portfolio-projet-master
+npm run dev
 ```
+
+The current setup was generated from the official `create-next-app` CLI and then adjusted into a cleaner project structure for future tickets.
+
+## Available Scripts
+
+```bash
+npm run dev
+npm run build
+npm run start
+npm run lint
+```
+
+## Project Structure
+
+```text
+.
+|-- app/
+|   |-- layout.tsx
+|   `-- page.tsx
+|-- components/
+|   |-- layout/
+|   |   |-- site-footer.tsx
+|   |   `-- site-header.tsx
+|   `-- ui/
+|       |-- container.tsx
+|       `-- section-heading.tsx
+|-- lib/
+|   |-- site-config.ts
+|   `-- utils.ts
+|-- public/
+|   `-- .gitkeep
+|-- styles/
+|   `-- globals.css
+|-- types/
+|   `-- navigation.ts
+|-- .github/
+|-- eslint.config.mjs
+|-- next.config.ts
+|-- package.json
+|-- postcss.config.mjs
+|-- tsconfig.json
+`-- README
+```
+
+## Key Configuration Files
+
+- `package.json`: Next.js 16, React 19, TypeScript, ESLint, and Tailwind dependencies with the standard npm scripts.
+- `tsconfig.json`: strict TypeScript configuration with the `@/*` import alias.
+- `next.config.ts`: central place for future Next.js configuration, with `reactStrictMode` enabled.
+- `postcss.config.mjs`: enables Tailwind CSS v4 through `@tailwindcss/postcss`.
+- `styles/globals.css`: loads Tailwind globally and defines the base visual foundation.
+- `eslint.config.mjs`: uses the official Next.js ESLint presets for App Router and TypeScript.
+
+Tailwind CSS v4 does not require a separate `tailwind.config.ts` for this baseline setup. The default configuration is driven by the Tailwind import in `styles/globals.css`.
+
+## Current Scope
+
+- Next.js latest stable version with the App Router
+- TypeScript strict mode enabled
+- Tailwind CSS integrated
+- Root layout and homepage ready
+- Reusable folders prepared for components, shared logic, styles, and types
+
+Authentication, Prisma, database models, and admin features will be added in later tickets.
