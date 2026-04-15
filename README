@@ -1,1 +1,59 @@
+# 🚀 Portfolio Projet Master
 
+## 📖 Description
+
+Ce projet consiste à développer une **plateforme web personnelle** permettant de centraliser, gérer et exposer des projets techniques.
+
+L’application combine :
+
+- un **outil privé de gestion de projets** (administration, runbook, automatisation),
+- et un **portfolio public dynamique** destiné aux recruteurs.
+
+Elle permet notamment de :
+
+- structurer les informations techniques des projets,
+- automatiser la récupération de données depuis GitHub,
+- contrôler finement la visibilité des informations (public / privé),
+- et faciliter l’exécution des projets via une documentation claire.
+
+---
+
+## 🧩 Fonctionnalités
+
+- Gestion de projets (CRUD)
+- Portfolio public dynamique
+- Intégration GitHub (auto-sync)
+- Runbook d’exécution des projets
+- Statistiques globales
+- Authentification sécurisée
+- Déploiement Docker + CI/CD
+
+---
+
+## 🧰 Technologies
+
+- Next.js (TypeScript)
+- NextAuth (authentification)
+- PostgreSQL
+- Prisma ORM
+- Docker / Docker Compose
+- GitHub Actions (CI/CD)
+- Nginx (reverse proxy)
+
+---
+
+## ⚙️ Installation
+
+```bash
+# Cloner le repository
+git clone <repo-url>
+
+# Accéder au projet
+cd <repo-name>
+
+# Configurer les variables d’environnement
+cp .env.example .env
+
+# Lancer l’application
+docker compose up --build
+```

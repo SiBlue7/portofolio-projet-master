@@ -1,0 +1,36 @@
+name: Sync Sub Issues
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync subtasks
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+
+            // Vérifie si le label ajouté est "Ready"
+            if (!context.payload.label || context.payload.label.name !== "Ready") {
+              return;
+            }
+
+            const body = issue.body || "";
+            const matches = body.match(/#\d+/g) || [];
+
+            for (const ref of matches) {
+              const number = parseInt(ref.replace("#", ""));
+
+              console.log(`Ajout du label Ready à #${number}`);
+
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: number,
+                labels: ["Ready"]
+              });
+            }
