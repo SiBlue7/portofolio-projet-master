@@ -9,6 +9,7 @@
     "format:check": "prettier --check .",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "test": "node ./scripts/run-tests.mjs",
     "start": "next start"
   },
   "dependencies": {
