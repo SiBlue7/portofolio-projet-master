@@ -20,13 +20,13 @@ const highlights = [
 ];
 
 const foundations = [
-  "App Router with a root layout and typed page components",
+  "App Router with dedicated public and admin areas",
   "Tailwind CSS v4 wired through global styles and PostCSS",
   "Reusable UI primitives in components for future screens",
-  "Dedicated lib and types folders for shared logic and contracts",
+  "Dedicated lib, hooks, and types folders for shared concerns",
 ];
 
-export default function Home() {
+export default function HomePage() {
   return (
     <Container className="py-16 sm:py-20">
       <section className="grid gap-12 lg:grid-cols-[1.4fr_0.9fr] lg:items-start">
@@ -52,10 +52,10 @@ export default function Home() {
               Next.js 16 App Router
             </span>
             <span className="rounded-full border border-slate-200 bg-white px-4 py-2 font-medium">
-              TypeScript strict mode
+              Public route group
             </span>
             <span className="rounded-full border border-slate-200 bg-white px-4 py-2 font-medium">
-              Tailwind CSS v4
+              Admin-ready structure
             </span>
           </div>
         </div>
@@ -63,8 +63,8 @@ export default function Home() {
         <div className="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-sm">
           <SectionHeading
             eyebrow="Initial scope"
-            title="What this setup already gives you"
-            description="A stable baseline with just enough structure to support the next tickets."
+            title="What this structure already gives you"
+            description="A stable baseline with just enough separation to support the next tickets."
           />
           <ul className="mt-6 space-y-4">
             {foundations.map((item) => (
@@ -82,9 +82,9 @@ export default function Home() {
 
       <section className="mt-16 space-y-6">
         <SectionHeading
-          eyebrow="Structure"
-          title="Prepared for the next feature tickets"
-          description="Each folder has a clear role so future auth, Prisma, and admin modules can be added without mixing concerns."
+          eyebrow="Architecture"
+          title="Prepared for public pages, admin pages, and API routes"
+          description="Each folder now has a clearer responsibility so upcoming auth, Prisma, forms, and project modules can land in the right place."
         />
 
         <div className="grid gap-6 md:grid-cols-3">

@@ -9,7 +9,7 @@ export function SiteHeader() {
         <div className="space-y-1">
           <Link
             href="/"
-            className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500"
+            className="text-sm font-semibold tracking-[0.24em] text-slate-500 uppercase"
           >
             {siteConfig.name}
           </Link>
