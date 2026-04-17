@@ -18,3 +18,28 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+/// Publication and lifecycle states for portfolio projects.
+enum ProjectStatus {
+  DRAFT
+  IN_PROGRESS
+  COMPLETED
+  ARCHIVED
+}
+
+/// Portfolio project displayed publicly or managed privately.
+model Project {
+  id               String        @id @default(cuid())
+  title            String
+  slug             String        @unique
+  shortDescription String
+  description      String
+  githubUrl        String?
+  productionUrl    String?
+  preproductionUrl String?
+  isPublic         Boolean       @default(false)
+  isMaintained     Boolean       @default(true)
+  status           ProjectStatus @default(DRAFT)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+}
