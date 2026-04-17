@@ -11,6 +11,8 @@ jobs:
   install:
     name: Install Dependencies
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://ci_user:ci_password@localhost:5432/portfolio_projet_master?schema=public
 
     steps:
       - name: Checkout repository
