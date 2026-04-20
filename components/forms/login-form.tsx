@@ -5,24 +5,61 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
-import { AlertCircle, ArrowRight, LoaderCircle, ShieldCheck } from "lucide-react";
+import {
+  AlertCircle,
+  ArrowRight,
+  CheckCircle2,
+  Info,
+  LoaderCircle,
+  ShieldCheck,
+} from "lucide-react";
 import { loginSchema, type LoginInput } from "@/lib/auth/login-schema";
 import { cn } from "@/lib/utils";
 
+type FeedbackTone = "error" | "info" | "success";
+
+export type LoginFormFeedback = {
+  message: string;
+  tone: FeedbackTone;
+};
+
 type LoginFormProps = {
   callbackUrl: string;
-  initialMessage?: string;
+  initialFeedback?: LoginFormFeedback;
 };
 
 type LoginFormState = LoginInput;
 
+const feedbackStyles: Record<
+  FeedbackTone,
+  {
+    container: string;
+    icon: typeof AlertCircle;
+  }
+> = {
+  error: {
+    container: "border-rose-200 bg-rose-50 text-rose-700",
+    icon: AlertCircle,
+  },
+  info: {
+    container: "border-sky-200 bg-sky-50 text-sky-700",
+    icon: Info,
+  },
+  success: {
+    container: "border-emerald-200 bg-emerald-50 text-emerald-700",
+    icon: CheckCircle2,
+  },
+};
+
 export function LoginForm({
   callbackUrl,
-  initialMessage,
+  initialFeedback,
 }: Readonly<LoginFormProps>) {
   const router = useRouter();
   const [isRedirecting, startRedirectTransition] = useTransition();
-  const [feedbackMessage, setFeedbackMessage] = useState(initialMessage ?? "");
+  const [feedback, setFeedback] = useState<LoginFormFeedback | null>(
+    initialFeedback ?? null,
+  );
 
   const {
     register,
@@ -51,7 +88,7 @@ export function LoginForm({
   }, [isRedirecting, isSubmitting]);
 
   const onSubmit = handleSubmit(async (values) => {
-    setFeedbackMessage("");
+    setFeedback(null);
     clearErrors();
 
     const parsedValues = loginSchema.safeParse(values);
@@ -84,7 +121,10 @@ export function LoginForm({
     });
 
     if (!result?.ok || !result.url) {
-      setFeedbackMessage("Identifiants invalides. Vérifie votre email et votre mot de passe.");
+      setFeedback({
+        tone: "error",
+        message: "Identifiants invalides. Reessaie avec des informations valides.",
+      });
       return;
     }
 
@@ -94,6 +134,9 @@ export function LoginForm({
     });
   });
 
+  const feedbackStyle = feedback ? feedbackStyles[feedback.tone] : null;
+  const FeedbackIcon = feedbackStyle?.icon;
+
   return (
     <div className="rounded-[2rem] border border-slate-200/80 bg-white/95 p-8 shadow-[0_24px_80px_rgba(15,23,42,0.12)] backdrop-blur sm:p-10">
       <div className="flex items-center gap-3">
@@ -101,7 +144,7 @@ export function LoginForm({
           <ShieldCheck className="size-5" />
         </span>
         <div>
-          <p className="text-sm font-semibold tracking-[0.24em] text-slate-500 uppercase">
+          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-500">
             Admin Login
           </p>
           <h1 className="mt-1 text-3xl font-semibold tracking-tight text-slate-950">
@@ -111,14 +154,19 @@ export function LoginForm({
       </div>
 
       <p className="mt-5 text-sm leading-7 text-slate-600">
-        Accédez à votre espace privé pour gérer les projets, la visibilité du
-        portfolio et les futures données GitHub.
+        Accedez a votre espace prive pour gerer les projets, la visibilite du
+        portfolio et les futures donnees GitHub.
       </p>
 
-      {feedbackMessage ? (
-        <div className="mt-6 flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-          <AlertCircle className="mt-0.5 size-4 shrink-0" />
-          <p>{feedbackMessage}</p>
+      {feedback && feedbackStyle && FeedbackIcon ? (
+        <div
+          className={cn(
+            "mt-6 flex items-start gap-3 rounded-2xl border px-4 py-3 text-sm",
+            feedbackStyle.container,
+          )}
+        >
+          <FeedbackIcon className="mt-0.5 size-4 shrink-0" />
+          <p>{feedback.message}</p>
         </div>
       ) : null}
 
@@ -176,7 +224,7 @@ export function LoginForm({
       </form>
 
       <div className="mt-8 flex flex-col gap-3 border-t border-slate-200 pt-6 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between">
-        <p>Authentification par email et mot de passe chiffré côté serveur.</p>
+        <p>Authentification par email et mot de passe chiffre cote serveur.</p>
         <Link
           href="/"
           className="font-medium text-slate-950 transition hover:text-sky-700"

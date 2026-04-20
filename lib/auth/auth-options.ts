@@ -1,3 +1,4 @@
+import "server-only";
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
@@ -5,11 +6,31 @@ import { prisma } from "@/lib/db/prisma";
 import { loginSchema } from "@/lib/auth/login-schema";
 
 const developmentSecret = "portfolio-projet-master-dev-secret";
+const sessionMaxAgeInSeconds = 60 * 60 * 8;
+
+function getNextAuthSecret() {
+  const secret = process.env.NEXTAUTH_SECRET;
+
+  if (secret) {
+    return secret;
+  }
+
+  if (process.env.NODE_ENV !== "production") {
+    return developmentSecret;
+  }
+
+  throw new Error("NEXTAUTH_SECRET is required in production.");
+}
 
 export const authOptions: NextAuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET ?? developmentSecret,
+  secret: getNextAuthSecret(),
+  useSecureCookies: process.env.NODE_ENV === "production",
   session: {
     strategy: "jwt",
+    maxAge: sessionMaxAgeInSeconds,
+  },
+  jwt: {
+    maxAge: sessionMaxAgeInSeconds,
   },
   pages: {
     signIn: "/login",
@@ -61,6 +82,23 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith("/")) {
+        return `${baseUrl}${url}`;
+      }
+
+      try {
+        const parsedUrl = new URL(url);
+
+        if (parsedUrl.origin === baseUrl) {
+          return url;
+        }
+      } catch {
+        return `${baseUrl}/admin`;
+      }
+
+      return `${baseUrl}/admin`;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.sub = user.id;

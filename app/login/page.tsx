@@ -2,13 +2,17 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { LockKeyhole, ShieldCheck, Sparkles } from "lucide-react";
 import { getServerSession } from "next-auth/next";
-import { LoginForm } from "@/components/forms/login-form";
+import {
+  LoginForm,
+  type LoginFormFeedback,
+} from "@/components/forms/login-form";
 import { Container } from "@/components/ui/container";
 import { authOptions } from "@/lib/auth/auth-options";
 
 type LoginPageProps = {
   searchParams: Promise<{
     callbackUrl?: string;
+    error?: string;
     reason?: string;
   }>;
 };
@@ -16,23 +20,80 @@ type LoginPageProps = {
 const securityHighlights = [
   {
     icon: ShieldCheck,
-    title: "Connexion côté serveur",
+    title: "Connexion cote serveur",
     description:
-      "Les identifiants sont validés via NextAuth et Prisma, sans logique sensible exposée au client.",
+      "Les identifiants sont valides via NextAuth et Prisma, sans logique sensible exposee au client.",
   },
   {
     icon: LockKeyhole,
-    title: "Accès réservé à l’admin",
+    title: "Acces reserve a l'admin",
     description:
-      "Cette entrée prépare la protection du dashboard privé et la gestion centralisée des projets.",
+      "Cette entree prepare la protection du dashboard prive et la gestion centralisee des projets.",
   },
   {
     icon: Sparkles,
-    title: "Base prête pour évoluer",
+    title: "Base prete pour evoluer",
     description:
-      "Le formulaire garde une structure simple, lisible et réutilisable pour les prochains tickets auth.",
+      "Le formulaire garde une structure simple, lisible et reutilisable pour les prochains tickets auth.",
   },
 ];
+
+function getInitialFeedback(
+  reason?: string,
+  error?: string,
+): LoginFormFeedback | undefined {
+  if (reason === "unauthorized") {
+    return {
+      tone: "info",
+      message: "Connecte-toi pour acceder a l'espace d'administration.",
+    };
+  }
+
+  if (reason === "signed-out") {
+    return {
+      tone: "success",
+      message: "Vous avez ete deconnecte avec succes.",
+    };
+  }
+
+  if (error === "CredentialsSignin") {
+    return {
+      tone: "error",
+      message: "Identifiants invalides. Reessaie avec des informations valides.",
+    };
+  }
+
+  return undefined;
+}
+
+function getSafeCallbackUrl(callbackUrl?: string) {
+  if (!callbackUrl) {
+    return "/admin";
+  }
+
+  if (callbackUrl.startsWith("/")) {
+    return callbackUrl;
+  }
+
+  const configuredBaseUrl = process.env.NEXTAUTH_URL;
+
+  if (!configuredBaseUrl) {
+    return "/admin";
+  }
+
+  try {
+    const parsedCallbackUrl = new URL(callbackUrl);
+    const parsedBaseUrl = new URL(configuredBaseUrl);
+
+    if (parsedCallbackUrl.origin === parsedBaseUrl.origin) {
+      return `${parsedCallbackUrl.pathname}${parsedCallbackUrl.search}${parsedCallbackUrl.hash}`;
+    }
+  } catch {
+    return "/admin";
+  }
+
+  return "/admin";
+}
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const session = await getServerSession(authOptions);
@@ -41,13 +102,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
     redirect("/admin");
   }
 
-  const { callbackUrl, reason } = await searchParams;
-  const safeCallbackUrl =
-    callbackUrl && callbackUrl.startsWith("/") ? callbackUrl : "/admin";
-  const initialMessage =
-    reason === "unauthorized"
-      ? "Connecte-toi pour accéder à l’espace d’administration."
-      : undefined;
+  const { callbackUrl, error, reason } = await searchParams;
+  const safeCallbackUrl = getSafeCallbackUrl(callbackUrl);
+  const initialFeedback = getInitialFeedback(reason, error);
 
   return (
     <div className="min-h-screen">
@@ -62,16 +119,16 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             </Link>
 
             <div className="space-y-5">
-              <p className="text-sm font-semibold tracking-[0.26em] text-slate-500 uppercase">
-                Espace privé
+              <p className="text-sm font-semibold uppercase tracking-[0.26em] text-slate-500">
+                Espace prive
               </p>
               <h1 className="max-w-2xl text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
-                Une connexion admin claire, moderne et prête pour la suite.
+                Une connexion admin claire, moderne et prete pour la suite.
               </h1>
               <p className="max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">
-                Cette page sert de porte d’entrée à l’administration du
-                portfolio, avec une expérience sobre, responsive et cohérente
-                avec le socle visuel déjà en place.
+                Cette page sert de porte d&apos;entree a l&apos;administration du
+                portfolio, avec une experience sobre, responsive et coherente
+                avec le socle visuel deja en place.
               </p>
             </div>
 
@@ -102,7 +159,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           <section>
             <LoginForm
               callbackUrl={safeCallbackUrl}
-              initialMessage={initialMessage}
+              initialFeedback={initialFeedback}
             />
           </section>
         </div>

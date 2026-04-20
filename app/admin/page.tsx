@@ -1,26 +1,27 @@
 import { redirect } from "next/navigation";
 import { FolderKanban, LineChart, ShieldCheck } from "lucide-react";
 import { getServerSession } from "next-auth/next";
+import { SignOutButton } from "@/components/layout/sign-out-button";
 import { Container } from "@/components/ui/container";
 import { authOptions } from "@/lib/auth/auth-options";
 
 const adminHighlights = [
   {
-    title: "Pilotage centralisé",
+    title: "Pilotage centralise",
     description:
-      "Prépare la gestion des projets, des statuts, de la visibilité publique et des futurs runbooks.",
+      "Prepare la gestion des projets, des statuts, de la visibilite publique et des futurs runbooks.",
     icon: FolderKanban,
   },
   {
-    title: "Statistiques à venir",
+    title: "Statistiques a venir",
     description:
-      "Cette zone servira de base pour les indicateurs sur les commits, les technos et l’activité globale.",
+      "Cette zone servira de base pour les indicateurs sur les commits, les technos et l'activite globale.",
     icon: LineChart,
   },
   {
-    title: "Zone protégée",
+    title: "Zone protegee",
     description:
-      "La session authentifiée est déjà prise en compte pour empêcher l’accès direct sans connexion.",
+      "La session authentifiee est deja prise en compte pour empecher l'acces direct sans connexion.",
     icon: ShieldCheck,
   },
 ];
@@ -35,7 +36,7 @@ export default async function AdminPage() {
   return (
     <Container className="py-16 sm:py-20">
       <div className="rounded-[2rem] border border-slate-200 bg-white/90 p-8 shadow-sm sm:p-10">
-        <p className="text-sm font-semibold tracking-[0.2em] text-slate-500 uppercase">
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">
           Admin Area
         </p>
         <div className="mt-4 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -48,13 +49,16 @@ export default async function AdminPage() {
               <span className="font-semibold text-slate-900">
                 {session.user.email}
               </span>
-              . Cette page reste volontairement légère, mais l’accès est déjà
-              conditionné à une session valide.
+              . Cette page reste volontairement legere, mais l&apos;acces est deja
+              conditionne a une session valide.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
-            Session admin valide
+          <div className="flex flex-col gap-3 md:items-end">
+            <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700">
+              Session admin valide
+            </div>
+            <SignOutButton />
           </div>
         </div>
 
